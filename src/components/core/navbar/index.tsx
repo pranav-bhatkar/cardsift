@@ -14,6 +14,7 @@ import {
   PopoverTrigger,
 } from "@cc/components/ui/popover";
 import ThemeToggle from "./theme-toggle";
+import Link from "next/link";
 
 // Navigation links array
 const navigationLinks = [
@@ -71,16 +72,18 @@ export default function Navbar() {
                     return (
                       <NavigationMenuItem key={index} className="w-full">
                         <NavigationMenuLink
-                          href={link.href}
+                          asChild
                           className="flex-row items-center gap-2 py-1.5"
                           active={link.active}
                         >
-                          <Icon
-                            size={16}
-                            className="text-muted-foreground/80"
-                            aria-hidden="true"
-                          />
-                          <span>{link.label}</span>
+                          <Link href={link.href}>
+                            <Icon
+                              size={16}
+                              className="text-muted-foreground/80"
+                              aria-hidden="true"
+                            />
+                            <span>{link.label}</span>
+                          </Link>
                         </NavigationMenuLink>
                       </NavigationMenuItem>
                     );
@@ -98,15 +101,17 @@ export default function Navbar() {
                   <NavigationMenuItem key={index}>
                     <NavigationMenuLink
                       active={link.active}
-                      href={link.href}
+                      asChild
                       className="text-foreground hover:text-primary flex-row items-center gap-2 py-1.5 font-medium"
                     >
-                      <Icon
-                        size={16}
-                        className="text-muted-foreground/80"
-                        aria-hidden="true"
-                      />
-                      <span>{link.label}</span>
+                      <Link href={link.href}>
+                        <Icon
+                          size={16}
+                          className="text-muted-foreground/80"
+                          aria-hidden="true"
+                        />
+                        <span>{link.label}</span>
+                      </Link>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 );
