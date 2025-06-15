@@ -3,11 +3,11 @@ import React from "react";
 
 function ProfilePage() {
   return (
-    <Container className="h-screen flex items-center flex-col justify-center">
-      <h1 className="text-4xl font-bold text-center">
+    <Container className="flex h-screen flex-col items-center justify-center">
+      <h1 className="text-center text-4xl font-bold">
         This is a protected page by middleware.
       </h1>
-      <p className="text-center mt-4">
+      <p className="mt-4 text-center">
         this page is under construction, please check back later.
       </p>
       <p>Sorry 💔 😢</p>

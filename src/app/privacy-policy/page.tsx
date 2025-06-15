@@ -2,13 +2,13 @@ import React from "react";
 
 function PrivacyPolicyPage() {
   return (
-    <section className="relative py-20 px-4 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+    <section className="from-primary/5 via-background to-secondary/5 relative bg-gradient-to-br px-4 py-20">
       <div className="container mx-auto">
-        <h1 className="text-4xl md:text-5xl font-bold mb-10 text-center bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+        <h1 className="from-primary to-primary/70 mb-10 bg-gradient-to-r bg-clip-text text-center text-4xl font-bold text-transparent md:text-5xl">
           Privacy Policy for CardSift (Beta)
         </h1>
 
-        <div className="max-w-3xl mx-auto bg-card p-8 rounded-lg shadow-lg">
+        <div className="bg-card mx-auto max-w-3xl rounded-lg p-8 shadow-lg">
           <p className="text-muted-foreground mb-6 text-sm">
             <strong>Effective Date:</strong> June 15, 2025
           </p>
@@ -21,14 +21,14 @@ function PrivacyPolicyPage() {
             Privacy Policy.
           </p>
 
-          <h2 className="text-2xl font-semibold mt-8 mb-4 text-primary">
+          <h2 className="text-primary mt-8 mb-4 text-2xl font-semibold">
             1. Information We Collect
           </h2>
           <p className="text-muted-foreground mb-4">
             During the CardSift Beta, we may collect the following types of
             information:
           </p>
-          <ul className="list-disc list-inside text-muted-foreground space-y-2 mb-6">
+          <ul className="text-muted-foreground mb-6 list-inside list-disc space-y-2">
             <li>
               <strong>Account Information:</strong> When you register for
               CardSift, we collect your name, email address, and password.
@@ -56,13 +56,13 @@ function PrivacyPolicyPage() {
             </li>
           </ul>
 
-          <h2 className="text-2xl font-semibold mt-8 mb-4 text-primary">
+          <h2 className="text-primary mt-8 mb-4 text-2xl font-semibold">
             2. How We Use Your Information
           </h2>
           <p className="text-muted-foreground mb-4">
             We use your information for the following purposes:
           </p>
-          <ul className="list-disc list-inside text-muted-foreground space-y-2 mb-6">
+          <ul className="text-muted-foreground mb-6 list-inside list-disc space-y-2">
             <li>
               <strong>To Provide and Improve CardSift:</strong> We use your data
               to provide you with the CardSift service, personalize your
@@ -84,13 +84,13 @@ function PrivacyPolicyPage() {
             </li>
           </ul>
 
-          <h2 className="text-2xl font-semibold mt-8 mb-4 text-primary">
+          <h2 className="text-primary mt-8 mb-4 text-2xl font-semibold">
             3. Data Sharing and Disclosure
           </h2>
           <p className="text-muted-foreground mb-4">
             We may share your information in the following circumstances:
           </p>
-          <ul className="list-disc list-inside text-muted-foreground space-y-2 mb-6">
+          <ul className="text-muted-foreground mb-6 list-inside list-disc space-y-2">
             <li>
               <strong>With Service Providers:</strong> We may share your
               information with third-party service providers who assist us with
@@ -110,14 +110,14 @@ function PrivacyPolicyPage() {
             </li>
           </ul>
 
-          <h2 className="text-2xl font-semibold mt-8 mb-4 text-primary">
+          <h2 className="text-primary mt-8 mb-4 text-2xl font-semibold">
             4. Data Security
           </h2>
           <p className="text-muted-foreground mb-4">
             We take reasonable measures to protect your information from
             unauthorized access, use, or disclosure. These measures include:
           </p>
-          <ul className="list-disc list-inside text-muted-foreground space-y-2 mb-6">
+          <ul className="text-muted-foreground mb-6 list-inside list-disc space-y-2">
             <li>
               <strong>Encryption:</strong> We use industry-standard encryption
               to protect your data during transmission.
@@ -132,7 +132,7 @@ function PrivacyPolicyPage() {
             </li>
           </ul>
 
-          <h2 className="text-2xl font-semibold mt-8 mb-4 text-primary">
+          <h2 className="text-primary mt-8 mb-4 text-2xl font-semibold">
             5. Data Retention
           </h2>
           <p className="text-muted-foreground mb-6">
@@ -141,7 +141,7 @@ function PrivacyPolicyPage() {
             obligations, resolve disputes, and enforce our agreements.
           </p>
 
-          <h2 className="text-2xl font-semibold mt-8 mb-4 text-primary">
+          <h2 className="text-primary mt-8 mb-4 text-2xl font-semibold">
             6. Your Rights
           </h2>
           <p className="text-muted-foreground mb-4">
@@ -149,7 +149,7 @@ function PrivacyPolicyPage() {
             limited. However, we are committed to transparency and will make
             reasonable efforts to:
           </p>
-          <ul className="list-disc list-inside text-muted-foreground space-y-2 mb-6">
+          <ul className="text-muted-foreground mb-6 list-inside list-disc space-y-2">
             <li>
               <strong>Provide Access to Your Data:</strong> Upon request, we
               will provide you with a copy of the information we have about you.
@@ -165,7 +165,7 @@ function PrivacyPolicyPage() {
             </li>
           </ul>
 
-          <h2 className="text-2xl font-semibold mt-8 mb-4 text-primary">
+          <h2 className="text-primary mt-8 mb-4 text-2xl font-semibold">
             7. AI Chat Data Handling
           </h2>
           <p className="text-muted-foreground mb-6">
@@ -175,7 +175,7 @@ function PrivacyPolicyPage() {
             and kept securely.
           </p>
 
-          <h2 className="text-2xl font-semibold mt-8 mb-4 text-primary">
+          <h2 className="text-primary mt-8 mb-4 text-2xl font-semibold">
             8. Scraping Data Handling
           </h2>
           <p className="text-muted-foreground mb-6">
@@ -184,7 +184,7 @@ function PrivacyPolicyPage() {
             will be shown to user.
           </p>
 
-          <h2 className="text-2xl font-semibold mt-8 mb-4 text-primary">
+          <h2 className="text-primary mt-8 mb-4 text-2xl font-semibold">
             9. Changes to this Privacy Policy
           </h2>
           <p className="text-muted-foreground mb-6">
@@ -194,7 +194,7 @@ function PrivacyPolicyPage() {
             acceptance of the new Privacy Policy.
           </p>
 
-          <h2 className="text-2xl font-semibold mt-8 mb-4 text-primary">
+          <h2 className="text-primary mt-8 mb-4 text-2xl font-semibold">
             10. Contact Us
           </h2>
           <p className="text-muted-foreground mb-6">

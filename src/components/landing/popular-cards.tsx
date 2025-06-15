@@ -8,9 +8,9 @@ import { CreditCardPreview } from "./credit-card-preview";
 function PopularCards() {
   const popularCards = creditCards.slice(0, 6);
   return (
-    <section className="py-20 px-4 bg-muted/30">
+    <section className="bg-muted/30 px-4 py-20">
       <div className="container mx-auto">
-        <div className="flex justify-between items-center mb-12">
+        <div className="mb-12 flex items-center justify-between">
           <h2 className="text-3xl font-bold">Popular Credit Cards</h2>
           <Link href="/compare">
             <Button variant="outline">
@@ -19,7 +19,7 @@ function PopularCards() {
           </Link>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {popularCards.map((card) => (
             <CreditCardPreview key={card.id} card={card} />
           ))}

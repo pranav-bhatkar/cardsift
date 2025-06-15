@@ -5,23 +5,23 @@ import { ArrowRight, Search } from "lucide-react";
 import Link from "next/link";
 function HeroSection() {
   return (
-    <section className="relative py-20 px-4 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+    <section className="from-primary/5 via-background to-secondary/5 relative bg-gradient-to-br px-4 py-20">
       <div className="container mx-auto text-center">
-        <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+        <h1 className="from-primary to-primary/70 mb-6 bg-gradient-to-r bg-clip-text text-4xl font-bold text-transparent md:text-6xl">
           CardSift
         </h1>
-        <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+        <p className="text-muted-foreground mx-auto mb-8 max-w-3xl text-xl md:text-2xl">
           Find Your Perfect Credit Card.
         </p>
 
-        <div className="max-w-2xl mx-auto mb-12">
+        <div className="mx-auto mb-12 max-w-2xl">
           <div className="flex gap-2">
             <Input
               placeholder="Ask me anything about credit cards..."
-              className="text-lg py-5"
+              className="py-5 text-lg"
             />
             <Button size="lg" className="px-8">
-              <Search className="h-5 w-5 mr-2" />
+              <Search className="mr-2 h-5 w-5" />
               Search
             </Button>
           </div>

@@ -118,7 +118,7 @@ export default function SignupPage() {
             onError: (ctx) => {
               setErrors((prev) => ({ ...prev, form: ctx.error.message }));
             },
-          }
+          },
         );
 
         if (error) throw error;
@@ -135,7 +135,7 @@ export default function SignupPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="bg-background flex min-h-screen items-center justify-center">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -147,7 +147,7 @@ export default function SignupPage() {
             animate={{ scale: 1, rotate: [0, 360] }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
           >
-            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+            <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-500" />
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -163,7 +163,7 @@ export default function SignupPage() {
             transition={{ delay: 0.6 }}
             className="text-muted-foreground"
           >
-            Welcome to CardFinder AI
+            Welcome to CardSift AI
           </motion.p>
         </motion.div>
       </div>
@@ -173,7 +173,7 @@ export default function SignupPage() {
   const progress = ((currentStep + 1) / steps.length) * 100;
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+    <div className="bg-background flex min-h-screen items-center justify-center px-4">
       <motion.div
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -193,15 +193,15 @@ export default function SignupPage() {
           }}
           className="mb-8"
         >
-          <div className="flex justify-between items-center mb-2">
+          <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-medium">
               Step {currentStep + 1} of {steps.length}
             </span>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-muted-foreground text-sm">
               {Math.round(progress)}%
             </span>
           </div>
-          <div className="w-full bg-muted rounded-full h-2">
+          <div className="bg-muted h-2 w-full rounded-full">
             <motion.div
               className="bg-primary h-2 rounded-full"
               initial={{ width: 0 }}
@@ -225,12 +225,12 @@ export default function SignupPage() {
               exit={{ x: -50, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
-              <div className="text-center mb-8">
+              <div className="mb-8 text-center">
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                  className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4"
+                  className="bg-primary/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full"
                 >
                   {React.createElement(steps[currentStep].icon, {
                     className: "h-6 w-6 text-primary",
@@ -244,7 +244,7 @@ export default function SignupPage() {
               <div className="space-y-6">
                 {steps[currentStep].fields.map((field, index) => (
                   <div key={field}>
-                    <label className="block text-sm font-medium mb-2 capitalize">
+                    <label className="mb-2 block text-sm font-medium capitalize">
                       {field === "creditScore" ? "Credit Score" : field}
                     </label>
                     <motion.div
@@ -256,10 +256,10 @@ export default function SignupPage() {
                           field === "password"
                             ? "password"
                             : field === "email"
-                            ? "email"
-                            : ["income", "creditScore", "age"].includes(field)
-                            ? "number"
-                            : "text"
+                              ? "email"
+                              : ["income", "creditScore", "age"].includes(field)
+                                ? "number"
+                                : "text"
                         }
                         value={formData[field as keyof typeof formData]}
                         onChange={(e) =>
@@ -285,7 +285,7 @@ export default function SignupPage() {
                           y: { duration: 0.2 },
                           x: { duration: 0.4 },
                         }}
-                        className="text-red-500 text-sm mt-1"
+                        className="mt-1 text-sm text-red-500"
                       >
                         {errors[field]}
                       </motion.p>
@@ -296,14 +296,14 @@ export default function SignupPage() {
             </motion.div>
           </AnimatePresence>
 
-          <div className="flex justify-between mt-8">
+          <div className="mt-8 flex justify-between">
             <Button
               variant="outline"
               onClick={handlePrevious}
               disabled={currentStep === 0}
               className="flex items-center"
             >
-              <ChevronLeft className="h-4 w-4 mr-1" />
+              <ChevronLeft className="mr-1 h-4 w-4" />
               Previous
             </Button>
 
@@ -323,7 +323,7 @@ export default function SignupPage() {
               >
                 <Button onClick={handleNext} className="flex items-center">
                   Next
-                  <ChevronRight className="h-4 w-4 ml-1" />
+                  <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
               </motion.div>
             )}

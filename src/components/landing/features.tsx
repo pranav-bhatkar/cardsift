@@ -3,28 +3,28 @@ import React from "react";
 
 function FeaturesSection() {
   return (
-    <section className="py-20 px-4">
+    <section className="px-4 py-20">
       <div className="container mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-12">
-          Why Choose CardFinder AI?
+        <h2 className="mb-12 text-center text-3xl font-bold">
+          Why Choose CardSift AI?
         </h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="text-center p-6 rounded-lg border bg-card hover:shadow-lg transition-shadow">
-            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Sparkles className="h-6 w-6 text-primary" />
+        <div className="grid gap-8 md:grid-cols-3">
+          <div className="bg-card rounded-lg border p-6 text-center transition-shadow hover:shadow-lg">
+            <div className="bg-primary/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
+              <Sparkles className="text-primary h-6 w-6" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">AI-Powered Search</h3>
+            <h3 className="mb-3 text-xl font-semibold">AI-Powered Search</h3>
             <p className="text-muted-foreground">
               Get personalized credit card recommendations based on your
               spending patterns and preferences using advanced AI.
             </p>
           </div>
 
-          <div className="text-center p-6 rounded-lg border bg-card hover:shadow-lg transition-shadow">
-            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <BarChart3 className="h-6 w-6 text-primary" />
+          <div className="bg-card rounded-lg border p-6 text-center transition-shadow hover:shadow-lg">
+            <div className="bg-primary/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
+              <BarChart3 className="text-primary h-6 w-6" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">
+            <h3 className="mb-3 text-xl font-semibold">
               Real-time Comparisons
             </h3>
             <p className="text-muted-foreground">
@@ -33,11 +33,11 @@ function FeaturesSection() {
             </p>
           </div>
 
-          <div className="text-center p-6 rounded-lg border bg-card hover:shadow-lg transition-shadow">
-            <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4">
-              <Database className="h-6 w-6 text-primary" />
+          <div className="bg-card rounded-lg border p-6 text-center transition-shadow hover:shadow-lg">
+            <div className="bg-primary/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
+              <Database className="text-primary h-6 w-6" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">
+            <h3 className="mb-3 text-xl font-semibold">
               Comprehensive Database
             </h3>
             <p className="text-muted-foreground">

@@ -5,12 +5,9 @@ import {
   HouseIcon,
   LogOut,
   MessageCircle,
-  Moon,
-  Sun,
   User,
 } from "lucide-react";
 
-import Logo from "@cc/components/core/navbar/logo";
 import { Button } from "@cc/components/ui/button";
 import {
   NavigationMenu,
@@ -47,27 +44,27 @@ export default function Navbar() {
     await authClient.signOut();
   }
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <CreditCard className="h-6 w-6 text-primary" />
+            <CreditCard className="text-primary h-6 w-6" />
             <span className="text-xl font-bold">CardSift AI</span>
           </Link>
 
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden items-center space-x-6 md:flex">
             {navigationLinks.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm flex justify-center items-center  font-medium transition-colors hover:text-primary ${
+                className={`hover:text-primary flex items-center justify-center text-sm font-medium transition-colors ${
                   pathname === item.href
                     ? "text-primary"
                     : "text-muted-foreground"
                 }`}
               >
                 <item.icon
-                  className="inline-block mr-2 h-4 w-4"
+                  className="mr-2 inline-block h-4 w-4"
                   aria-hidden="true"
                 />
                 {item.label}
@@ -80,7 +77,7 @@ export default function Navbar() {
               <div className="flex items-center space-x-2">
                 <Link
                   href="/profile"
-                  className="flex items-center space-x-2 px-3 py-1 bg-muted rounded-full"
+                  className="bg-muted flex items-center space-x-2 rounded-full px-3 py-1"
                 >
                   <User className="h-4 w-4" />
                   <span className="text-sm font-medium">

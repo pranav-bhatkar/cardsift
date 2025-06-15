@@ -3,8 +3,8 @@ import React from "react";
 
 function AboutPage() {
   return (
-    <Container className="h-screen flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-center">
+    <Container className="flex h-screen items-center justify-center">
+      <h1 className="text-center text-4xl font-bold">
         Didn't have time to write the about page yet.
         <br />
         Please check back later.

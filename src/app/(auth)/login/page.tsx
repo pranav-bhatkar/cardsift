@@ -5,14 +5,7 @@ import type React from "react";
 import { useState } from "react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import {
-  Eye,
-  EyeOff,
-  Loader2,
-  CheckCircle,
-  XCircle,
-  Loader,
-} from "lucide-react";
+import { Eye, EyeOff, CheckCircle, XCircle, Loader } from "lucide-react";
 import { Button } from "@cc/components/ui/button";
 import { Input } from "@cc/components/ui/input";
 import Link from "next/link";
@@ -57,7 +50,7 @@ export default function LoginPage() {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="bg-background flex min-h-screen items-center justify-center">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -69,7 +62,7 @@ export default function LoginPage() {
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
           >
-            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+            <CheckCircle className="mx-auto mb-4 h-16 w-16 text-green-500" />
           </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -93,7 +86,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+    <div className="bg-background flex min-h-screen items-center justify-center px-4">
       <motion.div
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -106,7 +99,7 @@ export default function LoginPage() {
           transition={{ delay: 0.1 }}
           className="bg-card rounded-lg border p-8 shadow-lg"
         >
-          <div className="text-center mb-8">
+          <div className="mb-8 text-center">
             <h1 className="text-2xl font-bold">Welcome Back</h1>
             <p className="text-muted-foreground mt-2">
               Sign in to access your account
@@ -115,7 +108,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">
+              <label htmlFor="email" className="mb-2 block text-sm font-medium">
                 Email
               </label>
               <motion.div
@@ -129,7 +122,7 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
                   required
-                  className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                  className="focus:ring-primary/20 transition-all duration-200 focus:ring-2"
                 />
               </motion.div>
             </div>
@@ -137,7 +130,7 @@ export default function LoginPage() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium mb-2"
+                className="mb-2 block text-sm font-medium"
               >
                 Password
               </label>
@@ -153,12 +146,12 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
                   required
-                  className="pr-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                  className="focus:ring-primary/20 pr-10 transition-all duration-200 focus:ring-2"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transform"
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4" />
@@ -184,7 +177,7 @@ export default function LoginPage() {
                   x: { type: "spring", stiffness: 300 },
                   backgroundColor: { duration: 0.5 },
                 }}
-                className="flex items-center space-x-2 text-red-600 text-sm p-3 rounded-lg border border-red-200"
+                className="flex items-center space-x-2 rounded-lg border border-red-200 p-3 text-sm text-red-600"
               >
                 <XCircle className="h-4 w-4" />
                 <span>{error}</span>
@@ -199,10 +192,10 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full relative overflow-hidden"
+                  className="relative w-full overflow-hidden"
                 >
                   {isLoading && (
-                    <Loader className={cn("h-4 w-4 mr-2 animate-spin")} />
+                    <Loader className={cn("mr-2 h-4 w-4 animate-spin")} />
                   )}
                   {isLoading ? <>Signing in...</> : <>Sign In</>}
                 </Button>
@@ -211,15 +204,15 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Don't have an account?{" "}
               <Link href="/signup" className="text-primary hover:underline">
                 Sign up
               </Link>
             </p>
-            <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-              <p className="text-xs text-muted-foreground">Demo credentials:</p>
-              <p className="text-xs font-mono">demo@example.com / password</p>
+            <div className="bg-muted/50 mt-4 rounded-lg p-3">
+              <p className="text-muted-foreground text-xs">Demo credentials:</p>
+              <p className="font-mono text-xs">demo@example.com / password</p>
             </div>
           </div>
         </motion.div>
