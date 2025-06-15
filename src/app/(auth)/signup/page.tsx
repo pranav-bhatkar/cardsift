@@ -184,7 +184,13 @@ export default function SignupPage() {
         <motion.div
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ delay: 0.2 }}
+          transition={{
+            delay: 0.2,
+            duration: 0.3,
+            ease: "easeInOut",
+            stiffness: 100,
+            damping: 20,
+          }}
           className="mb-8"
         >
           <div className="flex justify-between items-center mb-2">
@@ -237,12 +243,7 @@ export default function SignupPage() {
 
               <div className="space-y-6">
                 {steps[currentStep].fields.map((field, index) => (
-                  <motion.div
-                    key={field}
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 + index * 0.1 }}
-                  >
+                  <div key={field}>
                     <label className="block text-sm font-medium mb-2 capitalize">
                       {field === "creditScore" ? "Credit Score" : field}
                     </label>
@@ -289,18 +290,13 @@ export default function SignupPage() {
                         {errors[field]}
                       </motion.p>
                     )}
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </motion.div>
           </AnimatePresence>
 
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="flex justify-between mt-8"
-          >
+          <div className="flex justify-between mt-8">
             <Button
               variant="outline"
               onClick={handlePrevious}
@@ -331,7 +327,7 @@ export default function SignupPage() {
                 </Button>
               </motion.div>
             )}
-          </motion.div>
+          </div>
         </motion.div>
       </motion.div>
     </div>

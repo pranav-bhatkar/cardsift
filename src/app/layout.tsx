@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { JetBrains_Mono, Outfit } from "next/font/google";
 import "./globals.css";
 import Navbar from "@cc/components/core/navbar";
 import { ThemeProvider } from "@cc/components/core/theme-provider";
+import Footer from "@cc/components/core/footer";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const outfit = Outfit({
   subsets: ["latin"],
+  variable: "--font-sans",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
+  variable: "--font-mono",
 });
-
 export const metadata: Metadata = {
   title: "Card Sift",
   description:
@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${outfit.variable} ${jetbrainsMono.variable} antialiased`}
       >
         <ThemeProvider
           attribute="class"
@@ -39,6 +39,7 @@ export default function RootLayout({
           <Navbar />
         </ThemeProvider>
         {children}
+        <Footer />
       </body>
     </html>
   );

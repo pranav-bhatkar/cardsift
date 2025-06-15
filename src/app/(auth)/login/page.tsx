@@ -5,11 +5,19 @@ import type React from "react";
 import { useState } from "react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Loader2, CheckCircle, XCircle } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+  CheckCircle,
+  XCircle,
+  Loader,
+} from "lucide-react";
 import { Button } from "@cc/components/ui/button";
 import { Input } from "@cc/components/ui/input";
 import Link from "next/link";
 import { authClient } from "@cc/lib/auth-client";
+import { cn } from "@cc/lib/utils";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -77,7 +85,7 @@ export default function LoginPage() {
             transition={{ delay: 0.6 }}
             className="text-muted-foreground"
           >
-            Redirecting to dashboard...
+            Redirecting...
           </motion.p>
         </motion.div>
       </div>
@@ -99,30 +107,14 @@ export default function LoginPage() {
           className="bg-card rounded-lg border p-8 shadow-lg"
         >
           <div className="text-center mb-8">
-            <motion.h1
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="text-2xl font-bold"
-            >
-              Welcome Back
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-muted-foreground mt-2"
-            >
+            <h1 className="text-2xl font-bold">Welcome Back</h1>
+            <p className="text-muted-foreground mt-2">
               Sign in to access your account
-            </motion.p>
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <motion.div
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-            >
+            <div>
               <label htmlFor="email" className="block text-sm font-medium mb-2">
                 Email
               </label>
@@ -140,13 +132,9 @@ export default function LoginPage() {
                   className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
                 />
               </motion.div>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ x: -20, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
+            <div>
               <label
                 htmlFor="password"
                 className="block text-sm font-medium mb-2"
@@ -179,7 +167,7 @@ export default function LoginPage() {
                   )}
                 </button>
               </motion.div>
-            </motion.div>
+            </div>
 
             {error && (
               <motion.div
@@ -203,11 +191,7 @@ export default function LoginPage() {
               </motion.div>
             )}
 
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.6 }}
-            >
+            <div>
               <motion.div
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -217,33 +201,16 @@ export default function LoginPage() {
                   disabled={isLoading}
                   className="w-full relative overflow-hidden"
                 >
-                  {isLoading ? (
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{
-                        duration: 1,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: "linear",
-                      }}
-                      className="flex items-center"
-                    >
-                      <Loader2 className="h-4 w-4 mr-2" />
-                      Signing in...
-                    </motion.div>
-                  ) : (
-                    "Sign In"
+                  {isLoading && (
+                    <Loader className={cn("h-4 w-4 mr-2 animate-spin")} />
                   )}
+                  {isLoading ? <>Signing in...</> : <>Sign In</>}
                 </Button>
               </motion.div>
-            </motion.div>
+            </div>
           </form>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-            className="mt-6 text-center"
-          >
+          <div className="mt-6 text-center">
             <p className="text-sm text-muted-foreground">
               Don't have an account?{" "}
               <Link href="/signup" className="text-primary hover:underline">
@@ -254,7 +221,7 @@ export default function LoginPage() {
               <p className="text-xs text-muted-foreground">Demo credentials:</p>
               <p className="text-xs font-mono">demo@example.com / password</p>
             </div>
-          </motion.div>
+          </div>
         </motion.div>
       </motion.div>
     </div>
