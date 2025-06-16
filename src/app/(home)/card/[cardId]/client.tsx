@@ -41,21 +41,9 @@ export default function CardDetailPage({
   card: CreditCardWithAllRelations;
   relatedCards?: CreditCardType[];
 }) {
+  const [aiSummary, setAiSummary] = useState<string>("");
   // The notFound() in the parent component handles the null case,
   // so this check is for client-side safety.
-  if (!card) {
-    return (
-      <div className="bg-background flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="mb-4 text-2xl font-bold">Card Not Found</h1>
-          <Link href="/compare">
-            <Button>Back to Compare</Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
-  const [aiSummary, setAiSummary] = useState<string>("");
   async function getAiSummary() {
     const { success, message, text } = await generateCardSummary(card.id);
     if (success) {
@@ -70,6 +58,19 @@ export default function CardDetailPage({
     // Fetch AI summary when the component mounts
     getAiSummary();
   }, [card.id]);
+
+  if (!card) {
+    return (
+      <div className="bg-background flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="mb-4 text-2xl font-bold">Card Not Found</h1>
+          <Link href="/compare">
+            <Button>Back to Compare</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <motion.div
