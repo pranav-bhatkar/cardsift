@@ -1,25 +1,33 @@
 import { Star, ArrowRight } from "lucide-react";
 import { Button } from "@cc/components/ui/button";
 import { Badge } from "@cc/components/ui/badge";
-import type { CreditCard } from "@cc/lib/data";
+import type { CreditCardWithAllRelations } from "@cc/lib/prisma";
 import Link from "next/link";
 
 interface CreditCardPreviewProps {
-  card: CreditCard;
+  card: CreditCardWithAllRelations;
 }
 
 export function CreditCardPreview({ card }: CreditCardPreviewProps) {
   return (
     <div className="bg-card group rounded-lg border p-6 transition-all duration-200 hover:shadow-lg">
-      <div className="mb-4 flex items-start justify-between">
+      <div className="mb-4 flex items-start justify-between gap-4">
         <div className="flex-1">
           <h3 className="mb-1 text-lg font-semibold">{card.name}</h3>
-          <p className="text-muted-foreground mb-2 text-sm">{card.bank}</p>
+          <p className="text-muted-foreground mb-2 text-sm">{card.bank.name}</p>
           <Badge variant="secondary" className="text-xs">
             {card.cardType}
           </Badge>
         </div>
-        <div className="from-primary/20 to-primary/10 h-10 w-16 flex-shrink-0 rounded border bg-gradient-to-r"></div>
+        <div className="h-20 w-32 flex-shrink-0 overflow-hidden rounded border">
+          {card.image && (
+            <img
+              src={card.image}
+              alt={card.name}
+              className="h-full w-full object-contain"
+            />
+          )}
+        </div>
       </div>
 
       <div className="mb-4 space-y-2">

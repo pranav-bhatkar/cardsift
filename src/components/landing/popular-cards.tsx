@@ -2,11 +2,15 @@ import Link from "next/link";
 import React from "react";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
-import { creditCards } from "@cc/lib/data";
-import { CreditCardPreview } from "./credit-card-preview";
 
-function PopularCards() {
-  const popularCards = creditCards.slice(0, 6);
+import { CreditCardPreview } from "./credit-card-preview";
+import { CreditCardWithAllRelations } from "@cc/lib/prisma";
+
+function PopularCards({
+  popularCards,
+}: {
+  popularCards: CreditCardWithAllRelations[];
+}) {
   return (
     <section className="bg-muted/30 px-4 py-20">
       <div className="container mx-auto">

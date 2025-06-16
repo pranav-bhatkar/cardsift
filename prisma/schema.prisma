@@ -74,3 +74,312 @@ model Verification {
 
   @@map("verification")
 }
+
+// ==================================
+//        MAIN CREDIT CARD MODEL
+// ==================================
+
+model CreditCard {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  bank        Bank     @relation(fields: [bankId], references: [id], onDelete: Cascade)
+  bankId      String
+  image       String
+  annualFee   Float
+  joiningFee  Float
+  cardType    CardType
+  benefits    String[]
+  rating      Float
+  sourceUrl   String   @unique
+  // Using @db.Text for potentially long descriptions
+  description String   @db.Text
+
+  // --- RELATIONS ---
+  // Each nested object from the TS interface is now a separate model
+  // linked via a one-to-one relationship.
+
+  // Optional one-to-one relation for feeWaiver
+  feeWaiver    FeeWaiver?
+  // Optional one-to-one relation for welcomeBonus
+  welcomeBonus WelcomeBonus?
+
+  // Required one-to-one relations
+  fees                  Fees                @relation(fields: [feesId], references: [id], onDelete: Cascade)
+  feesId                String              @unique
+  rewards               Rewards             @relation(fields: [rewardsId], references: [id], onDelete: Cascade)
+  rewardsId             String              @unique
+  redemption            Redemption          @relation(fields: [redemptionId], references: [id], onDelete: Cascade)
+  redemptionId          String              @unique
+  travelBenefits        TravelBenefits      @relation(fields: [travelBenefitsId], references: [id], onDelete: Cascade)
+  travelBenefitsId      String              @unique
+  lifestyleBenefits     LifestyleBenefits   @relation(fields: [lifestyleBenefitsId], references: [id], onDelete: Cascade)
+  lifestyleBenefitsId   String              @unique
+  eligibilityCriteria   EligibilityCriteria @relation(fields: [eligibilityCriteriaId], references: [id], onDelete: Cascade)
+  eligibilityCriteriaId String              @unique
+  finePrint             FinePrint           @relation(fields: [finePrintId], references: [id], onDelete: Cascade)
+  finePrintId           String              @unique
+
+  createdAt   DateTime @default(now())
+  lastUpdated DateTime @updatedAt
+}
+
+// ==================================
+//        RELATED MODELS
+// ==================================
+
+// Corresponds to the nullable `feeWaiver` object
+model FeeWaiver {
+  id String @id @default(cuid())
+
+  // Flattened from the nested TS object
+  annualFeeIsWaiverable   Boolean
+  annualFeeSpendThreshold Float
+  annualFeeDescription    String
+  joiningFeeIsWaiverable  Boolean
+  joiningFeeCondition     String
+
+  // Back-relation to CreditCard
+  creditCard   CreditCard @relation(fields: [creditCardId], references: [id], onDelete: Cascade)
+  creditCardId String     @unique
+}
+
+// Corresponds to the nullable `welcomeBonus` object
+model WelcomeBonus {
+  id String @id @default(cuid())
+
+  bonusPoints   Int?
+  bonusMiles    Int?
+  cashback      Float?
+  minSpend      Float
+  timeframeDays Int
+  description   String
+
+  // One-to-many relation for vouchers
+  vouchers Voucher[]
+
+  // Back-relation to CreditCard
+  creditCard   CreditCard @relation(fields: [creditCardId], references: [id], onDelete: Cascade)
+  creditCardId String     @unique
+}
+
+// Corresponds to the `vouchers` array within `welcomeBonus`
+model Voucher {
+  id    String @id @default(cuid())
+  brand String
+  value Float
+
+  // Many-to-one relation back to WelcomeBonus
+  welcomeBonus   WelcomeBonus @relation(fields: [welcomeBonusId], references: [id], onDelete: Cascade)
+  welcomeBonusId String
+}
+
+// Corresponds to the `fees` object
+model Fees {
+  id String @id @default(cuid())
+
+  latePayment                  String
+  overLimit                    String
+  foreignTransactionPercentage Float
+  // Flattened from the nested `apr` object
+  aprPurchase                  Float
+  aprCashAdvance               Float
+  interestFreePeriodDays       Int
+
+  // Back-relation to CreditCard
+  creditCard CreditCard?
+}
+
+// Corresponds to the `rewards` object
+model Rewards {
+  id String @id @default(cuid())
+
+  estimatedPointValueINR     Float
+  // Flattened from the nested `baseRate` object
+  baseRatePointsPer100INR    Float?
+  baseRateCashbackPercentage Float?
+  pointExpiry                String
+
+  // One-to-many relations for arrays of objects
+  bonusCategories BonusCategory[]
+  milestones      Milestone[]
+
+  // Back-relation to CreditCard
+  creditCard CreditCard?
+}
+
+// Corresponds to the `bonusCategories` array within `rewards`
+model BonusCategory {
+  id String @id @default(cuid())
+
+  category           String
+  pointsPer100INR    Float?
+  cashbackPercentage Float?
+  monthlyCap         Float?
+  notes              String?
+
+  // Many-to-one relation back to Rewards
+  rewards   Rewards @relation(fields: [rewardsId], references: [id], onDelete: Cascade)
+  rewardsId String
+}
+
+// Corresponds to the `milestones` array within `rewards`
+model Milestone {
+  id String @id @default(cuid())
+
+  spendThreshold Float
+  reward         String
+  period         RewardPeriod
+
+  // Many-to-one relation back to Rewards
+  rewards   Rewards @relation(fields: [rewardsId], references: [id], onDelete: Cascade)
+  rewardsId String
+}
+
+// Corresponds to the `redemption` object
+model Redemption {
+  id String @id @default(cuid())
+
+  cashEquivalent   Boolean
+  productCatalogue Boolean
+  flightBooking    Boolean
+  hotelBooking     Boolean
+
+  // One-to-many relations for partner arrays
+  airlinePartners AirlinePartner[]
+  hotelPartners   HotelPartner[]
+
+  // Back-relation to CreditCard
+  creditCard CreditCard?
+}
+
+// Corresponds to the `airlinePartners` array
+model AirlinePartner {
+  id            String @id @default(cuid())
+  name          String
+  transferRatio String
+
+  // Many-to-one relation back to Redemption
+  redemption   Redemption @relation(fields: [redemptionId], references: [id], onDelete: Cascade)
+  redemptionId String
+}
+
+// Corresponds to the `hotelPartners` array
+model HotelPartner {
+  id            String @id @default(cuid())
+  name          String
+  transferRatio String
+
+  // Many-to-one relation back to Redemption
+  redemption   Redemption @relation(fields: [redemptionId], references: [id], onDelete: Cascade)
+  redemptionId String
+}
+
+// Corresponds to the `travelBenefits` object
+model TravelBenefits {
+  id String @id @default(cuid())
+
+  // Flattened from nested `loungeAccess` object
+  loungeAccessDomestic      Int
+  loungeAccessInternational Int
+  loungeAccessNetwork       LoungeNetwork[]
+
+  // Flattened from nested `travelInsurance` object
+  travelInsuranceHasInsurance   Boolean
+  travelInsuranceCoverageAmount Float
+  travelInsuranceType           String?
+  forexMarkup                   Float
+
+  // Back-relation to CreditCard
+  creditCard CreditCard?
+}
+
+// Corresponds to the `lifestyleBenefits` object
+model LifestyleBenefits {
+  id String @id @default(cuid())
+
+  // Flattened from nested objects
+  diningIsAvailable               Boolean
+  diningDescription               String
+  moviesIsAvailable               Boolean
+  moviesDescription               String
+  golfIsAvailable                 Boolean
+  golfComplimentaryRoundsPerMonth Int
+  golfDescription                 String
+  conciergeIsAvailable            Boolean
+  conciergeDescription            String
+
+  // Back-relation to CreditCard
+  creditCard CreditCard?
+}
+
+// Corresponds to the `eligibilityCriteria` object
+model EligibilityCriteria {
+  id String @id @default(cuid())
+
+  minIncome                    Float
+  minAge                       Int
+  maxAge                       Int
+  employmentTypes              EmploymentType[]
+  minCreditScore               Int
+  existingRelationshipRequired Boolean
+
+  // Back-relation to CreditCard
+  creditCard CreditCard?
+}
+
+// Corresponds to the `finePrint` object
+model FinePrint {
+  id String @id @default(cuid())
+
+  capping    String[]
+  exclusions String[]
+
+  // Back-relation to CreditCard
+  creditCard CreditCard?
+}
+
+model Bank {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  image       String
+  description String?      @db.Text
+  website     String?
+  creditCards CreditCard[]
+
+  createdAt   DateTime @default(now())
+  lastUpdated DateTime @updatedAt
+
+  @@map("bank")
+}
+
+// ==================================
+//              ENUMS
+// ==================================
+
+enum CardType {
+  Premium
+  Travel
+  Cashback
+  Business
+  Lifestyle
+  Fuel
+}
+
+enum RewardPeriod {
+  monthly
+  quarterly
+  annually
+}
+
+enum LoungeNetwork {
+  Priority_Pass @map("Priority Pass")
+  Dreamfolks
+  Visa
+  Mastercard
+  Diners_Club   @map("Diners Club")
+}
+
+enum EmploymentType {
+  Salaried
+  Self_Employed @map("Self-Employed")
+}
