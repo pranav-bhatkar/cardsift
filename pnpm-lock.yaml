@@ -14,6 +14,9 @@ importers:
       '@ai-sdk/react':
         specifier: ^1.2.12
         version: 1.2.12(react@19.1.0)(zod@3.25.64)
+      '@google/generative-ai':
+        specifier: ^0.24.1
+        version: 0.24.1
       '@prisma/client':
         specifier: 6.9.0
         version: 6.9.0(prisma@6.9.0(typescript@5.8.3))(typescript@5.8.3)
@@ -62,6 +65,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      dotenv:
+        specifier: ^16.5.0
+        version: 16.5.0
       lucide-react:
         specifier: ^0.514.0
         version: 0.514.0(react@19.1.0)
@@ -243,6 +249,10 @@ packages:
 
   '@floating-ui/utils@0.2.9':
     resolution: {integrity: sha512-MDWhGtE+eHw5JW7lq4qhc5yRLS11ERl1c7Z6Xd0a58DozHES6EnNNwUWbMiG4J9Cgj053Bhk8zvlhFYKVhULwg==}
+
+  '@google/generative-ai@0.24.1':
+    resolution: {integrity: sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==}
+    engines: {node: '>=18.0.0'}
 
   '@hexagon/base64@1.1.28':
     resolution: {integrity: sha512-lhqDEAvWixy3bZ+UOYbPwUbBkwBq5C1LAJ/xPC8Oi+lL54oyakv/npbA0aU2hgCsx/1NUd4IBvV03+aUBWxerw==}
@@ -1485,6 +1495,10 @@ packages:
   doctrine@2.1.0:
     resolution: {integrity: sha512-35mSku4ZXK0vfCuHEDAwt55dg2jNajHZ1odvF+8SSr82EsZY4QmXfuWso8oEd8zRhVObSN18aM0CjSdoBX7zIw==}
     engines: {node: '>=0.10.0'}
+
+  dotenv@16.5.0:
+    resolution: {integrity: sha512-m/C+AwOAr9/W1UOIZUo232ejMNnJAJtYQjUbHoNTBNTJSvqzzDh7vnrei3o3r3m9blf6ZoDkvcw0VmozNRFJxg==}
+    engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -2857,6 +2871,8 @@ snapshots:
 
   '@floating-ui/utils@0.2.9': {}
 
+  '@google/generative-ai@0.24.1': {}
+
   '@hexagon/base64@1.1.28': {}
 
   '@humanfs/core@0.19.1': {}
@@ -4084,6 +4100,8 @@ snapshots:
   doctrine@2.1.0:
     dependencies:
       esutils: 2.0.3
+
+  dotenv@16.5.0: {}
 
   dunder-proto@1.0.1:
     dependencies:

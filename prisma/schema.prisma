@@ -119,6 +119,8 @@ model CreditCard {
   finePrint             FinePrint           @relation(fields: [finePrintId], references: [id], onDelete: Cascade)
   finePrintId           String              @unique
 
+  embedding Unsupported("vector(768)")?
+
   createdAt   DateTime @default(now())
   lastUpdated DateTime @updatedAt
 }
