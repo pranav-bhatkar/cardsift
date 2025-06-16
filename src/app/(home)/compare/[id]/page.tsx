@@ -2,17 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { redirect, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { LoadingSequence } from "@cc/components/compare/loading-sequence";
 import { CardSummarySection } from "@cc/components/compare/card-summary-section";
 import { EnhancedComparisonTable } from "@cc/components/compare/enhanced-comparison-table";
 import { ChatModal } from "@cc/components/compare/chat-modal";
 
-import { getCreditCardsByIds } from "./actions";
+import { getCreditCardsByCompareId } from "./actions";
 import { CreditCardWithAllRelations } from "@cc/lib/prisma";
+import { toast } from "sonner";
 
 export default function ComparisonPage() {
-  redirect("/compare");
   const params = useParams();
   const [selectedCards, setSelectedCards] = useState<
     CreditCardWithAllRelations[]
@@ -23,9 +23,8 @@ export default function ComparisonPage() {
   useEffect(() => {
     // Parse card IDs from URL parameter
     async function fetchCards() {
-      const cardIds = (params.id as string).split("%2C");
-      console.log("Selected card IDs:", cardIds);
-      const cards = await getCreditCardsByIds(cardIds);
+      const id = params.id as string;
+      const cards = await getCreditCardsByCompareId(id);
       setSelectedCards(cards);
     }
     fetchCards();
@@ -66,7 +65,10 @@ export default function ComparisonPage() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setIsChatOpen(true)}
+            onClick={() => {
+              // setIsChatOpen(true)
+              toast.error("Chat feature is not implemented yet.");
+            }}
             className="bg-primary text-primary-foreground rounded-lg px-6 py-3 font-medium shadow-lg transition-shadow hover:shadow-xl"
           >
             Chat with AI

@@ -155,12 +155,10 @@ export async function POST(request: Request) {
               if (!assistantId) {
                 throw new Error("No assistant message found!");
               }
-              console.log("Saving chat with ID:", id);
               const [, assistantMessage] = appendResponseMessages({
                 messages: [message],
                 responseMessages: response.messages,
               });
-              console.log("Assistant message:", assistantMessage);
               // conver assistantMessage parts to prisma JSON type
               const parts = assistantMessage.parts?.map((part: any) => ({
                 text: (part as { type: "text"; text: string }).text, // Type assertion

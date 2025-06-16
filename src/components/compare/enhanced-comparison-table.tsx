@@ -3,20 +3,11 @@
 import React from "react";
 
 import { motion } from "motion/react";
-import {
-  DollarSign,
-  Gift,
-  Plane,
-  Car,
-  Shield,
-  Smartphone,
-  Phone,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
+import { DollarSign, Gift, Plane, ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@cc/components/ui/button";
 import { CreditCardWithAllRelations } from "@cc/lib/prisma";
+import { toast } from "sonner";
 
 // Define the type based on your Prisma schema
 
@@ -170,9 +161,9 @@ export function EnhancedComparisonTable({
       const minValue = Math.min(...validValues);
       const maxValue = Math.max(...validValues);
 
-      if (numValue === minValue) return "text-green-600 bg-green-50";
-      if (numValue === maxValue) return "text-red-600 bg-red-50";
-      return "text-yellow-600 bg-yellow-50";
+      if (numValue === minValue) return "text-green-600 ";
+      if (numValue === maxValue) return "text-red-600 ";
+      return "text-yellow-600 ";
     }
 
     if (sectionTitle === "Rewards" || sectionTitle === "Travel Benefits") {
@@ -184,13 +175,11 @@ export function EnhancedComparisonTable({
         if (validValues.length === 0) return "";
 
         const maxValue = Math.max(...validValues);
-        if (value === maxValue && value > 0)
-          return "text-green-600 bg-green-50";
+        if (value === maxValue && value > 0) return "text-green-600 ";
       }
-      if (typeof value === "boolean" && value)
-        return "text-green-600 bg-green-50";
+      if (typeof value === "boolean" && value) return "text-green-600 ";
       if (typeof value === "string" && value !== "N/A" && value !== "0")
-        return "text-green-600 bg-green-50";
+        return "text-green-600 ";
     }
 
     return "";
@@ -230,7 +219,15 @@ export function EnhancedComparisonTable({
                     className="min-w-[200px] p-4 text-center font-medium"
                   >
                     <div className="space-y-2">
-                      <div className="from-primary/20 to-primary/10 mx-auto h-8 w-12 rounded bg-gradient-to-r"></div>
+                      <div className="h-8 w-12 flex-shrink-0 overflow-hidden rounded border">
+                        {card.image && (
+                          <img
+                            src={card.image}
+                            alt={card.name}
+                            className="h-full w-full object-contain"
+                          />
+                        )}
+                      </div>
                       <div>
                         <p className="font-semibold">{card.name}</p>
                         <p className="text-muted-foreground text-sm">
@@ -395,7 +392,17 @@ export function EnhancedComparisonTable({
               Comparing {cards.length} credit cards across{" "}
               {comparisonSections.length} categories
             </p>
-            <Button variant="outline" size="sm">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                // Handle export logic here
+                toast.message("Export functionality is not implemented yet.", {
+                  description: "This feature is coming soon!",
+                  duration: 3000,
+                });
+              }}
+            >
               Export as PDF
             </Button>
           </div>

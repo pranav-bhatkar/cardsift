@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@cc/components/core/navbar";
 import { ThemeProvider } from "@cc/components/core/theme-provider";
 import Footer from "@cc/components/core/footer";
+import { Toaster } from "@cc/components/ui/sonner";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

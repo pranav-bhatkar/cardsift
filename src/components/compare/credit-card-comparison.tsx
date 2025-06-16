@@ -28,8 +28,15 @@ export function CreditCardComparison({
     >
       <div className="flex items-start gap-6">
         {/* Card Image */}
-        <div className="from-primary/20 to-primary/10 h-12 w-20 flex-shrink-0 rounded border bg-gradient-to-r"></div>
-
+        <div className="h-20 w-32 flex-shrink-0 overflow-hidden rounded border">
+          {card.image && (
+            <img
+              src={card.image}
+              alt={card.name}
+              className="h-full w-full object-cover"
+            />
+          )}
+        </div>
         {/* Card Info */}
         <div className="min-w-0 flex-1">
           <div className="mb-3 flex items-start justify-between">

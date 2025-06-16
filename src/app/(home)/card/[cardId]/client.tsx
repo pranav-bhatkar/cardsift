@@ -30,6 +30,9 @@ import {
 import { CreditCardPreview } from "@cc/components/landing/credit-card-preview";
 import type { CreditCard as CreditCardType } from "@cc/generated/prisma"; // Basic type for related cards
 import { CreditCardWithAllRelations } from "@cc/lib/prisma";
+import { toast } from "sonner";
+import { generateCardSummary } from "@cc/app/action";
+import { useEffect, useState } from "react";
 
 export default function CardDetailPage({
   card,
@@ -52,6 +55,21 @@ export default function CardDetailPage({
       </div>
     );
   }
+  const [aiSummary, setAiSummary] = useState<string>("");
+  async function getAiSummary() {
+    const { success, message, text } = await generateCardSummary(card.id);
+    if (success) {
+      toast.success("AI Summary generated successfully!");
+      setAiSummary(text || "No summary available.");
+    } else {
+      toast.error(message || "Failed to generate AI summary.");
+      setAiSummary("Failed to generate AI summary.");
+    }
+  }
+  useEffect(() => {
+    // Fetch AI summary when the component mounts
+    getAiSummary();
+  }, [card.id]);
 
   return (
     <motion.div
@@ -100,6 +118,10 @@ export default function CardDetailPage({
               <p className="text-muted-foreground mb-6 text-lg">
                 {card.description}
               </p>
+              <p className="text-muted-foreground mb-6 text-lg">
+                AI Summary:{" "}
+                <span className="text-muted-foreground">{aiSummary}</span>
+              </p>
               <div className="mb-6 grid grid-cols-2 gap-4">
                 <div className="bg-card rounded-lg border p-4">
                   <p className="text-muted-foreground text-sm">Annual Fee</p>
@@ -123,9 +145,6 @@ export default function CardDetailPage({
                   >
                     Apply Now
                   </a>
-                </Button>
-                <Button size="lg" variant="outline">
-                  Add to Compare
                 </Button>
               </div>
             </div>

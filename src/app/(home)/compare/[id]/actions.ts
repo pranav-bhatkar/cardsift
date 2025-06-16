@@ -17,6 +17,21 @@ export async function getCreditCardsByIds(creditCardIds: string[]) {
   });
   return cards;
 }
+export async function getCreditCardsByCompareId(id: string) {
+  // Fetch comparison by ID
+  const comparison = await prisma.compare.findUnique({
+    where: { id },
+    include: {
+      creditCards: {
+        include: creditCardWithAllRelationsInclude,
+      },
+    },
+  });
+  if (!comparison) {
+    throw new Error("Comparison not found");
+  }
+  return comparison.creditCards;
+}
 
 export async function fetchUserProfile(id: string) {
   // Simulate fetching user profile data

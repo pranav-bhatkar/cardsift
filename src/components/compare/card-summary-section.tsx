@@ -12,6 +12,7 @@ import Link from "next/link";
 import { authClient } from "@cc/lib/auth-client";
 import { CreditCardWithAllRelations } from "@cc/lib/prisma";
 import { User } from "@cc/generated/prisma";
+import { generateCardSummary, getUserById } from "@cc/app/action";
 
 interface CardSummaryProps {
   cards: CreditCardWithAllRelations[];
@@ -35,13 +36,43 @@ export function CardSummarySection({ cards }: CardSummaryProps) {
   const [selectedScore, setSelectedScore] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dbUser, setDBUser] = useState<User | null>(null);
+  const [aiSummarys, setAiSummarys] = useState<
+    {
+      cardId: string;
+      summary: string;
+    }[]
+  >([]);
   useEffect(() => {
     if (session?.user) {
       fetchUserProfile();
       checkEligibility();
     }
+    if (cards.length > 0) {
+      generateAISummary(cards);
+    }
   }, [session?.user, cards]);
-  const fetchUserProfile = async () => {};
+  const generateAISummary = async (cards: CreditCardWithAllRelations[]) => {
+    const summaries = await Promise.all(
+      cards.map(async (card) => {
+        await generateCardSummary(card.id);
+        const summary = await generateCardSummary(card.id);
+        return {
+          cardId: card.id,
+          summary: summary.text || "No summary available",
+        };
+      }),
+    );
+    setAiSummarys(summaries);
+  };
+  const fetchUserProfile = async () => {
+    const user = await getUserById(session?.user.id || "");
+
+    if (user) {
+      setDBUser(user);
+    } else {
+      console.error("User not found");
+    }
+  };
   const checkEligibility = async () => {
     setIsCheckingEligibility(true);
 
@@ -149,7 +180,15 @@ export function CardSummarySection({ cards }: CardSummaryProps) {
                   </p>
                   <Badge variant="secondary">{card.cardType}</Badge>
                 </div>
-                <div className="from-primary/20 to-primary/10 h-10 w-16 flex-shrink-0 rounded border bg-gradient-to-r"></div>
+                <div className="h-10 w-16 flex-shrink-0 overflow-hidden rounded border">
+                  {card.image && (
+                    <img
+                      src={card.image}
+                      alt={card.name}
+                      className="h-full w-full object-contain"
+                    />
+                  )}
+                </div>
               </div>
 
               {/* AI Summary */}
@@ -160,8 +199,10 @@ export function CardSummarySection({ cards }: CardSummaryProps) {
                 className="mb-4"
               >
                 <TypewriterText
-                  text={`Perfect for ${card.cardType.toLowerCase()} users. ${card.description}`}
-                  delay={index * 0.2 + 0.5}
+                  text={
+                    aiSummarys.find((summary) => summary.cardId === card.id)
+                      ?.summary || "Loading summary..."
+                  }
                 />
               </motion.div>
 
@@ -313,7 +354,7 @@ function TypewriterText({ text, delay = 0 }: { text: string; delay?: number }) {
           setCurrentIndex(currentIndex + 1);
         }
       },
-      delay * 1000 + currentIndex * 30,
+      delay + 10, // Adjust delay for each character
     );
 
     return () => clearTimeout(timer);

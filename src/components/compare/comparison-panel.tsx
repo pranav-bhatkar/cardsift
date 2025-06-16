@@ -5,6 +5,8 @@ import { Button } from "@cc/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { CreditCardWithAllRelations } from "@cc/lib/prisma";
+import { toast } from "sonner";
+import { createComparisonAction } from "@cc/app/(home)/compare/action";
 
 interface ComparisonPanelProps {
   cards: CreditCardWithAllRelations[];
@@ -17,12 +19,19 @@ export function ComparisonPanel({ cards, onRemoveCard }: ComparisonPanelProps) {
 
   if (cards.length === 0) return null;
 
-  const handleCompareDetails = () => {
+  const handleCompareDetails = async () => {
     if (cards.length === 0) return;
 
     setIsNavigating(true);
-    const cardIds = cards.map((card) => card.id).join(",");
-    router.push(`/compare/${cardIds}`);
+    const { success, id, message } = await createComparisonAction(
+      cards.map((card) => card.id),
+    );
+    if (success) {
+      toast.success("Comparison created successfully.");
+      router.push(`/compare/${id}`);
+    } else {
+      toast.error(message || "Failed to create comparison.");
+    }
   };
 
   return (

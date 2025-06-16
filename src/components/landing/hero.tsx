@@ -14,7 +14,7 @@ function HeroSection() {
           Find Your Perfect Credit Card.
         </p>
 
-        <div className="mx-auto mb-12 max-w-2xl">
+        {/* <div className="mx-auto mb-12 max-w-2xl">
           <div className="flex gap-2">
             <Input
               placeholder="Ask me anything about credit cards..."
@@ -25,7 +25,7 @@ function HeroSection() {
               Search
             </Button>
           </div>
-        </div>
+        </div> */}
 
         <Link href="/chat">
           <Button size="lg" variant="outline" className="mb-8">
