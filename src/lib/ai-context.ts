@@ -18,6 +18,19 @@ export async function getContext(query: string, cardIds?: string[]) {
     console.log(`Context: Filtering for specific cards: ${cardIds.join(", ")}`);
     const contextCards = await prisma.creditCard.findMany({
       where: { id: { in: cardIds } },
+      // Deeply include all relations for the context
+      include: {
+        bank: true,
+        feeWaiver: true,
+        welcomeBonus: { include: { vouchers: true } },
+        fees: true,
+        rewards: { include: { bonusCategories: true, milestones: true } },
+        redemption: { include: { airlinePartners: true, hotelPartners: true } },
+        travelBenefits: true,
+        lifestyleBenefits: true,
+        eligibilityCriteria: true,
+        finePrint: true,
+      },
     });
     return { contextCards };
   }
@@ -27,14 +40,21 @@ export async function getContext(query: string, cardIds?: string[]) {
   const queryEmbeddingResult = await embeddingModel.embedContent(query);
   const queryEmbedding = queryEmbeddingResult.embedding.values;
 
-  // Use Prisma's raw query feature to perform a vector similarity search
-  // The `<=>` operator is from pgvector and calculates the cosine distance
+  // ==================================================================
+  // THE FIX IS HERE
+  // ==================================================================
+
+  // 1. Prepare the vector string for the query parameter.
+  const vectorQueryString = `[${queryEmbedding.join(",")}]`;
+
+  // 2. Use a parameterized query and cast the parameter to the vector type.
   const similarCards = await prisma.$queryRaw<Array<{ id: string }>>`
     SELECT id
     FROM "CreditCard"
-    ORDER BY embedding <=> '[${queryEmbedding.join(",")}]'
+    ORDER BY embedding <=> ${vectorQueryString}::vector
     LIMIT 5;
   `;
+  // ==================================================================
 
   const relevantCardIds = similarCards.map((card) => card.id);
 
@@ -44,6 +64,19 @@ export async function getContext(query: string, cardIds?: string[]) {
 
   const contextCards = await prisma.creditCard.findMany({
     where: { id: { in: relevantCardIds } },
+    // Also deeply include relations for the RAG results
+    include: {
+      bank: true,
+      feeWaiver: true,
+      welcomeBonus: { include: { vouchers: true } },
+      fees: true,
+      rewards: { include: { bonusCategories: true, milestones: true } },
+      redemption: { include: { airlinePartners: true, hotelPartners: true } },
+      travelBenefits: true,
+      lifestyleBenefits: true,
+      eligibilityCriteria: true,
+      finePrint: true,
+    },
   });
 
   return { contextCards };

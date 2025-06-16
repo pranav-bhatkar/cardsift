@@ -2,7 +2,7 @@
 import { Prisma, PrismaClient } from "@cc/generated/prisma";
 
 export const prisma = new PrismaClient({
-  log: ["query", "info", "warn", "error"],
+  log: [],
 });
 
 export async function disconnectPrisma() {

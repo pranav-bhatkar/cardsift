@@ -13,9 +13,17 @@ import {
   Briefcase,
   CreditCard,
 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@cc/components/ui/select";
 import { Button } from "@cc/components/ui/button";
 import { Input } from "@cc/components/ui/input";
 import { authClient } from "@cc/lib/auth-client";
+import { signupAction } from "./action";
 
 const steps = [
   {
@@ -112,7 +120,7 @@ export default function SignupPage() {
             onSuccess: () => {
               setIsSuccess(true);
               setTimeout(() => {
-                router.push("/dashboard");
+                router.push("/");
               }, 2000);
             },
             onError: (ctx) => {
@@ -120,6 +128,17 @@ export default function SignupPage() {
             },
           },
         );
+        if (data) {
+          await signupAction({
+            userId: data.user.id,
+            age: parseInt(formData.age, 10),
+            creditScore: parseInt(formData.creditScore, 10),
+            employment: formData.employment as any, // Adjust type as needed
+            income: parseFloat(formData.income),
+            existingRelationship: [], // Add logic to handle existing relationships if needed
+          });
+          setIsSuccess(true);
+        }
 
         if (error) throw error;
 
@@ -251,27 +270,48 @@ export default function SignupPage() {
                       whileFocus={{ scale: 1.02 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
-                      <Input
-                        type={
-                          field === "password"
-                            ? "password"
-                            : field === "email"
-                              ? "email"
-                              : ["income", "creditScore", "age"].includes(field)
-                                ? "number"
-                                : "text"
-                        }
-                        value={formData[field as keyof typeof formData]}
-                        onChange={(e) =>
-                          handleInputChange(field, e.target.value)
-                        }
-                        placeholder={getPlaceholder(field)}
-                        className={`transition-all duration-200 ${
-                          errors[field]
-                            ? "border-red-500 focus:ring-red-200"
-                            : "focus:ring-primary/20"
-                        }`}
-                      />
+                      {field === "employment" ? (
+                        <Select
+                          defaultValue={formData.employment}
+                          onValueChange={(value) =>
+                            handleInputChange("employment", value)
+                          }
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select Employment Type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Salaried">Salaried</SelectItem>
+                            <SelectItem value="Self_Employed">
+                              Self Employed
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <Input
+                          type={
+                            field === "password"
+                              ? "password"
+                              : field === "email"
+                                ? "email"
+                                : ["income", "creditScore", "age"].includes(
+                                      field,
+                                    )
+                                  ? "number"
+                                  : "text"
+                          }
+                          value={formData[field as keyof typeof formData]}
+                          onChange={(e) =>
+                            handleInputChange(field, e.target.value)
+                          }
+                          placeholder={getPlaceholder(field)}
+                          className={`transition-all duration-200 ${
+                            errors[field]
+                              ? "border-red-500 focus:ring-red-200"
+                              : "focus:ring-primary/20"
+                          }`}
+                        />
+                      )}
                     </motion.div>
                     {errors[field] && (
                       <motion.p

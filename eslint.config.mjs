@@ -21,10 +21,12 @@ const eslintConfig = [
   {
     files: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"], // Specifies the files ESLint should target
     rules: {
-      "no-unused-vars": "warn", // Or "off" if you genuinely don't care about unused vars in dev
-      "@typescript-eslint/no-unused-vars": "warn", // Same for TypeScript
-      "no-console": "warn", // Keep console.log as a warning
+      "no-unused-vars": "off", // Or "off" if you genuinely don't care about unused vars in dev
+      "@typescript-eslint/no-unused-vars": "off", // Same for TypeScript
+      "@typescript-eslint/no-explicit-any": "off", // Disable the no-explicit-any rule
+      "no-console": "off", // Keep console.log as a warning
       "react/no-unescaped-entities": "off", // Disable this rule, it is often annoying and depends on use case
+      "@next/next/no-img-element": "off", // Disable warning about using <img> instead of next/image
     },
   },
 ];

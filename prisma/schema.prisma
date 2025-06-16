@@ -16,15 +16,22 @@ datasource db {
 
 model User {
   // for better auth 
-  id            String    @id
-  name          String
-  email         String
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
-  sessions      Session[]
-  accounts      Account[]
+  id                   String         @id
+  name                 String
+  email                String
+  emailVerified        Boolean
+  image                String?
+  createdAt            DateTime
+  updatedAt            DateTime
+  sessions             Session[]
+  accounts             Account[]
+  Chat                 Chat[]
+  // for eligibility criteria
+  employment           EmploymentType @default(Salaried)
+  income               Float          @default(0)
+  creditScore          Int            @default(0)
+  age                  Int            @default(0)
+  existingRelationship Bank[]
 
   @@unique([email])
   @@map("user")
@@ -350,6 +357,8 @@ model Bank {
 
   createdAt   DateTime @default(now())
   lastUpdated DateTime @updatedAt
+  eRUser      User?    @relation(fields: [eRUserId], references: [id])
+  eRUserId    String?
 
   @@map("bank")
 }
@@ -384,4 +393,51 @@ enum LoungeNetwork {
 enum EmploymentType {
   Salaried
   Self_Employed @map("Self-Employed")
+}
+
+// Chat Part
+model Chat {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  title     String
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String?
+  messages  Message[]
+  votes     Vote[]
+  streams   Stream[]
+
+  @@map("chat")
+}
+
+model Message {
+  id          String   @id @default(uuid())
+  chatId      String
+  chat        Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  role        String
+  parts       Json
+  attachments Json
+  createdAt   DateTime @default(now())
+  votes       Vote[]
+
+  @@map("message")
+}
+
+model Vote {
+  chatId    String
+  chat      Chat    @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  messageId String
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  isUpvoted Boolean
+
+  @@id([chatId, messageId])
+  @@map("vote")
+}
+
+model Stream {
+  id        String   @id @default(uuid())
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("stream")
 }
