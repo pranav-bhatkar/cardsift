@@ -204,15 +204,16 @@ export async function findBankLogo(bankName: string): Promise<string> {
 export async function scrapeWebsite(startUrl: string): Promise<ScrapeResult> {
   console.log(`Launching browser and navigating to ${startUrl}...`);
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: true, // Set to 'new' or false for debugging visually
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   const page = await browser.newPage();
   let combinedText = "";
+  let cardImageUrl: string | undefined = undefined;
 
   try {
     const response: HTTPResponse | null = await page.goto(startUrl, {
-      waitUntil: "networkidle2",
+      waitUntil: "domcontentloaded", // Changed to domcontentloaded for faster initial load, then we handle interactions.
       timeout: 60000,
     });
 
@@ -225,6 +226,46 @@ export async function scrapeWebsite(startUrl: string): Promise<ScrapeResult> {
       };
     }
 
+    // --- Step 1: Click elements that reveal hidden content ---
+    console.log("Attempting to click common expand/reveal elements...");
+    await page.evaluate(() => {
+      // Common selectors for "read more", "expand", "show all", FAQ toggles, tab buttons
+      const selectorsToClick = [
+        // Buttons/Links often used to expand content
+        'button[aria-expanded="false"]',
+        'a[data-toggle="collapse"]',
+        'div[data-bs-toggle="collapse"]',
+        '.accordion-button[aria-expanded="false"]',
+        ".expand-button",
+        ".show-more-link",
+        'a[href*="#"][onclick]', // Generic link that might expand content
+        ".tab-button:not(.active)", // Click inactive tabs to reveal content
+        ".nav-tabs a:not(.active)",
+        ".faq-question", // Click a FAQ question to reveal answer
+        ".read-more",
+        ".read-more-button",
+        'button[title*="show details"], button[aria-label*="show details"]',
+      ];
+
+      selectorsToClick.forEach((selector) => {
+        document.querySelectorAll(selector).forEach((el) => {
+          const htmlElement = el as HTMLElement;
+          if (htmlElement && typeof htmlElement.click === "function") {
+            try {
+              htmlElement.click();
+              console.log(`Clicked element: ${selector}`); // This console log appears in Puppeteer's context
+            } catch (e) {
+              // console.warn(`Could not click element with selector ${selector}:`, e);
+            }
+          }
+        });
+      });
+    });
+
+    // Wait for content to load after clicks. Adjust this delay based on website responsiveness.
+    await new Promise((resolve) => setTimeout(resolve, 3000)); // Increased to 3 seconds for better reliability
+
+    // Now, scrape the *fully revealed* text from the main page
     combinedText = await page.evaluate(() => document.body.innerText);
     const lowerCaseText = combinedText.toLowerCase();
 
@@ -234,72 +275,216 @@ export async function scrapeWebsite(startUrl: string): Promise<ScrapeResult> {
     ) {
       return { status: "error", message: "Page not found (404)." };
     }
+    // The credit card check can be refined, but let's keep it for now.
     if (
       !lowerCaseText.includes("credit card") &&
-      !lowerCaseText.includes("annual fee")
+      !lowerCaseText.includes("annual fee") &&
+      !lowerCaseText.includes("joining fee") &&
+      !lowerCaseText.includes("rewards")
     ) {
       return {
         status: "error",
-        message: "Page does not seem to be about a credit card.",
+        message:
+          "Page does not seem to be about a credit card (insufficient keywords).",
       };
     }
 
-    const cardImageUrl = await page.evaluate(() => {
-      const cardTitleElement = document.querySelector("h1");
-      const cardTitle = cardTitleElement
-        ? cardTitleElement.innerText.toLowerCase()
+    // --- Step 2: Smarter image extraction ---
+    cardImageUrl = await page.evaluate(() => {
+      // Get the potential card name from the main heading or title for better image matching
+      const cardNameElement =
+        document.querySelector("h1") || document.querySelector("h2");
+      const cardName = cardNameElement
+        ? cardNameElement.innerText.toLowerCase()
         : "";
+
       let bestImageSrc: string | undefined = undefined;
-      let bestScore = 0;
+      let maxScore = 0;
 
       document.querySelectorAll("img").forEach((img) => {
-        const alt = img.alt.toLowerCase();
-        const src = img.src.toLowerCase();
-        let score = 0;
-        if (alt.includes("card") || src.includes("card")) score += 2;
-        if (cardTitle && alt.includes(cardTitle)) score += 5;
-        if (img.width > 200 && img.height > 100) score += 3;
-        if (img.width < 50 || img.height < 50) score -= 5;
+        const src = img.src;
+        if (!src || src.startsWith("data:")) return; // Skip empty or base64 images
 
-        if (score > bestScore) {
-          bestScore = score;
-          bestImageSrc = img.src;
+        const alt = img.alt ? img.alt.toLowerCase() : "";
+        const imgNameFromSrc =
+          src.split("/").pop()?.split(".")[0].toLowerCase() || "";
+
+        let currentScore = 0;
+
+        // Prioritize images that are visibly large enough
+        if (img.naturalWidth > 150 && img.naturalHeight > 100) {
+          // naturalWidth/Height better for loaded images
+          currentScore += 5;
+        } else if (img.width < 50 || img.height < 50) {
+          // Penalize very small images
+          currentScore -= 10;
+        }
+
+        // Match against card name or common credit card terms
+        if (
+          cardName &&
+          (alt.includes(cardName) || imgNameFromSrc.includes(cardName))
+        ) {
+          currentScore += 10;
+        } else if (
+          alt.includes("credit card") ||
+          src.includes("credit-card") ||
+          imgNameFromSrc.includes("card")
+        ) {
+          currentScore += 5;
+        }
+
+        // Look for common card branding words in src or alt
+        if (
+          src.includes("visa") ||
+          src.includes("mastercard") ||
+          src.includes("amex") ||
+          src.includes("rupay") ||
+          alt.includes("visa") ||
+          alt.includes("mastercard") ||
+          alt.includes("amex") ||
+          alt.includes("rupay")
+        ) {
+          currentScore += 3;
+        }
+
+        // Check for specific image roles or classes often used for main product images
+        if (
+          img.className.includes("hero") ||
+          img.className.includes("product") ||
+          img.className.includes("card-image")
+        ) {
+          currentScore += 7;
+        }
+        if (img.id.includes("card-image") || img.id.includes("product-image")) {
+          currentScore += 7;
+        }
+
+        if (currentScore > maxScore) {
+          maxScore = currentScore;
+          bestImageSrc = src;
         }
       });
       return bestImageSrc;
     });
 
-    console.log("Successfully scraped the main page.");
+    console.log("Image URL found:", cardImageUrl || "None");
 
-    const keywords: string[] = [
+    // --- Step 3: Discover and scrape relevant linked pages more robustly ---
+    console.log("Discovering and scraping relevant sub-pages...");
+    const keywordsForLinks: string[] = [
       "fees",
       "charges",
+      "terms",
+      "conditions",
+      "tnc",
       "rewards",
       "benefits",
-      "terms",
+      "eligibility",
+      "faq",
+      "frequently asked questions",
+      "pricing",
+      "schedule of charges",
+      "mitc", // Most Important Terms and Conditions (Indian context)
     ];
+
     const discoveredLinks: string[] = await page.evaluate(
       (kws, baseUrl) => {
         const uniqueUrls = new Set<string>();
         document.querySelectorAll("a").forEach((link) => {
+          const href = link.href;
+          if (
+            !href ||
+            href.startsWith("#") ||
+            href.includes("javascript:") ||
+            !href.startsWith("http")
+          ) {
+            return; // Skip empty, fragment, script, or non-http links
+          }
+
           const linkText = link.innerText.toLowerCase();
-          const hasKeyword = kws.some((keyword) => linkText.includes(keyword));
-          if (hasKeyword && link.href) {
-            uniqueUrls.add(new URL(link.href, baseUrl).href);
+          const lowerCaseHref = href.toLowerCase();
+
+          // Check for keywords in link text OR href
+          const hasKeywordInText = kws.some((keyword) =>
+            linkText.includes(keyword),
+          );
+          const hasKeywordInHref = kws.some((keyword) =>
+            lowerCaseHref.includes(keyword),
+          );
+
+          // Also specifically look for terms/conditions/fees in the URL path, even if link text is generic
+          const isTermsUrl =
+            lowerCaseHref.includes("terms-condition") ||
+            lowerCaseHref.includes("tnc") ||
+            lowerCaseHref.includes("fees-charges") ||
+            lowerCaseHref.includes("schedule-of-charges");
+
+          // Only consider links within the same domain or direct subdomains for now
+          // This avoids scraping external ads or unrelated sites
+          const linkUrl = new URL(href);
+          const startDomain = new URL(baseUrl).hostname;
+          if (
+            linkUrl.hostname.endsWith(startDomain) ||
+            linkUrl.hostname === startDomain
+          ) {
+            if (
+              (hasKeywordInText || hasKeywordInHref || isTermsUrl) &&
+              !uniqueUrls.has(linkUrl.href)
+            ) {
+              uniqueUrls.add(linkUrl.href);
+            }
           }
         });
         return Array.from(uniqueUrls);
       },
-      keywords,
+      keywordsForLinks,
       startUrl,
     );
 
-    const linksToVisit = discoveredLinks.slice(0, 4);
+    // Filter out duplicates and the startUrl itself
+    const uniqueRelevantLinks = Array.from(
+      new Set(discoveredLinks.filter((link) => link !== startUrl)),
+    );
+
+    // Limit the number of sub-pages to visit to prevent excessive scraping
+    // Consider visiting more than just 4 if T&C are often spread out. Maybe up to 8.
+    const linksToVisit = uniqueRelevantLinks.slice(0, 8); // Increased from 4 to 8
+
     for (const link of linksToVisit) {
       try {
-        await page.goto(link, { waitUntil: "networkidle2", timeout: 45000 });
+        console.log(`Visiting sub-page: ${link}`);
+        await page.goto(link, {
+          waitUntil: "domcontentloaded",
+          timeout: 45000,
+        }); // Faster wait, rely on clicks
+        // Attempt to click expanders on sub-pages too, just in case
+        await page.evaluate(() => {
+          const selectorsToClick = [
+            'button[aria-expanded="false"]',
+            '.accordion-button[aria-expanded="false"]',
+            ".read-more",
+            ".show-more-link",
+            'a[data-toggle="collapse"]',
+            'div[data-bs-toggle="collapse"]',
+          ];
+          selectorsToClick.forEach((selector) => {
+            document.querySelectorAll(selector).forEach((el) => {
+              const htmlElement = el as HTMLElement;
+              if (htmlElement && typeof htmlElement.click === "function") {
+                try {
+                  htmlElement.click();
+                } catch (e) {
+                  /* ignore */
+                }
+              }
+            });
+          });
+        });
+        await new Promise((resolve) => setTimeout(resolve, 1500)); // Small delay for sub-page content
+
         const subPageText = await page.evaluate(() => document.body.innerText);
-        combinedText += `\n\n--- NEW PAGE CONTENT ---\n\n${subPageText}`;
+        combinedText += `\n\n--- CONTENT FROM LINKED PAGE: ${link} ---\n\n${subPageText}`;
       } catch (error) {
         console.warn(
           `Could not scrape sub-page ${link}: ${(error as Error).message}`,
@@ -308,8 +493,16 @@ export async function scrapeWebsite(startUrl: string): Promise<ScrapeResult> {
     }
 
     return { status: "ok", text: combinedText, cardImageUrl };
+  } catch (error) {
+    console.error(`Error during scraping ${startUrl}:`, error);
+    return {
+      status: "error",
+      message: `Scraping failed: ${(error as Error).message}`,
+    };
   } finally {
-    await browser.close();
+    if (browser) {
+      await browser.close();
+    }
   }
 }
 
@@ -367,8 +560,12 @@ export async function getStructuredDataForAdd(
 ): Promise<AICreditCardData> {
   const prompt = `
 You are an expert data extraction system. Analyze the following raw text scraped from a credit card webpage and convert it into a structured JSON object.
-The JSON object MUST conform to the following schema. Do not add any extra keys. If a value is not found, use 0 for numbers, an empty string for strings, and an empty object or array where appropriate.
-
+The JSON object MUST conform to the following schema. Do not add any extra keys. 
+- IF some values are not found for the eligibility criteria, like credit score, use standard defaults: 
+  700+ for minCreditScore, 21 for minAge, 60 for maxAge, and 0 for minIncome. or 
+- just like eligibility criteria, if some values are not found for the any other fields, some industry standard defaults should be used.
+- if just if some values are not found for the rewards, like estimatedPointValueINR, etc. use 0 for numbers, an empty string for strings, and an empty object or array where appropriate.
+- Use markdown formatting for the non single line text like description, benefits, etc.
 SCHEMA:
 {
   "id": "string",
@@ -434,6 +631,7 @@ RAW TEXT:
 ---
 ${rawText}
 `;
+  console.log("rawText", JSON.stringify(rawText, null, 2));
   return getAiResponse(prompt);
 }
 
@@ -449,7 +647,10 @@ Your task is to intelligently merge the new information into the existing JSON d
 - If a value is present in the new text but not the old JSON, add it.
 - If a value exists in the old JSON but is no longer mentioned in the new text, you can choose to keep it or remove it based on context (e.g., keep benefits, but remove a temporary offer).
 - Ensure the final JSON object strictly conforms to the provided schema. Do not add extra keys.
-
+- IF some values are not found for the eligibility criteria, like credit score, use standard defaults: 
+  700+ for minCreditScore, 21 for minAge, 60 for maxAge, and 0 for minIncome. or 
+- just like eligibility criteria, if some values are not found for the any other fields, some industry standard defaults should be used.
+- Use markdown formatting for the non single line text like description, benefits, etc.
 EXISTING JSON DATA:
 ---
 ${existingDataJson}
@@ -462,6 +663,7 @@ ${scrapedText}
 
 Return ONLY the single, complete, and updated valid JSON object and nothing else.
 `;
+  console.log("scrapedText", JSON.stringify(scrapedText, null, 2));
   return getAiResponse(prompt);
 }
 
